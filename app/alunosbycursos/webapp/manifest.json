@@ -24,6 +24,28 @@
           "odataVersion": "4.0"
         }
       }
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "Cursos-curso": {
+          "semanticObject": "Cursos",
+          "action": "curso",
+          "title": "{{flpTitle}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        },
+        "AlunosCursos-alunoscursos": {
+          "semanticObject": "AlunosCursos",
+          "action": "alunoscursos",
+          "title": "{{flpTitle}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        }
+      }
     }
   },
   "sap.ui": {

@@ -6,11 +6,11 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
-    "@cap-js/attachments": "^1.1.6",
     "@cap-js/hana": "^1",
     "@sap/cds": "^8",
     "@sap/textbundle": "^5.2.0",
-    "express": "^4"
+    "express": "^4",
+    "@sap/xssec": "^4"
   },
   "cds": {
     "i18n": {
@@ -23,6 +23,13 @@
     },
     "fiori": {
       "draft_deletion_timeout": "1d"
+    },
+    "requires": {
+      "[production]": {
+        "db": "hana",
+        "auth": "xsuaa"
+      },
+      "html5-repo": true
     }
   },
   "devDependencies": {

@@ -1,7 +1,7 @@
 namespace treinamento;
 
 using { managed, cuid } from '@sap/cds/common';
-using { Attachments } from '@cap-js/attachments';
+//using { Attachments } from '@cap-js/attachments';
 
 //aspect cuid { key ID : UUID; }
 entity Alunos : cuid, managed {
@@ -15,7 +15,7 @@ entity Alunos : cuid, managed {
     critico: Integer;
     observacao: String;
     curso : Association to Cursos;
-    attachments: Composition of many Attachments;
+    //attachments: Composition of many Attachments;
 }
 
 //aspect cuid { key ID : UUID; }
