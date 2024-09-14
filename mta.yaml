@@ -2,58 +2,31 @@ _schema-version: 3.3.0
 ID: Alunos
 version: 1.0.0
 description: "Treinamento APP"
-parameters:
-  enable-parallel-deployments: true
-  deploy_mode: html5-repo
-build-parameters:
-  before-all:
-    - builder: custom
-      commands:
-        - npm ci
-        - npx cds build --production
 modules:
   - name: Alunos-srv
     type: nodejs
     path: gen/srv
+    requires:
+      - name: Alunos-auth
+      - name: Alunos-db
+    provides:
+      - name: srv-api # required by consumers of CAP services (e.g. approuter)
+        properties:
+          srv-url: ${default-url}  
     parameters:
       buildpack: nodejs_buildpack
       readiness-health-check-type: http
       readiness-health-check-http-endpoint: /health
     build-parameters:
       builder: npm
-      ignore: ["node_modules/", "default-env.json"]
-    provides:
-      - name: srv-api # required by consumers of CAP services (e.g. approuter)
-        properties:
-          srv-url: ${default-url}
-    requires:
-      - name: Alunos-auth
-      - name: Alunos-db
-
-  - name: Alunos
-    type: approuter.nodejs
-    path: app/router
-    parameters:
-      keep-existing-routes: true
-      disk-quota: 256M
-      memory: 256M
-    requires:
-      - name: srv-api
-        group: destinations
-        properties:
-          name: srv-api # must be used in xs-app.json as well
-          url: ~{srv-url}
-          forwardAuthToken: true
-      - name: Alunos-auth
-      - name: Alunos-html5-runtime
 
   - name: Alunos-db-deployer
     type: hdb
     path: gen/db
+    requires:
+      - name: Alunos-db    
     parameters:
       buildpack: nodejs_buildpack
-    requires:
-      - name: Alunos-db
 
   - name: Alunos-app-deployer
     type: com.sap.application.content
@@ -67,16 +40,47 @@ modules:
       requires:
         - name: Alunosalunos
           artifacts:
-            - alunos.zip
-          target-path: app/
+            - treinamentoalunos.zip
+          target-path: app//
         - name: Alunosalunosbycursos
           artifacts:
-            - alunosbycursos.zip
-          target-path: app/
+            - treinamentoalunosbycursos.zip
+          target-path: app//
         - name: Alunoscursos
           artifacts:
-            - cursos.zip
-          target-path: app/
+            - treinamentocursos.zip
+          target-path: app//
+
+  - name: alunos-destination-content
+    type: com.sap.application.content
+    requires:
+    - name: alunos-destination-service
+      parameters:
+        content-target: true
+    - name: Alunos-html5-repo-host
+      parameters:
+        service-key:
+          name: alunos-html5-repo-host-key
+    - name: Alunos-auth
+      parameters:
+        service-key:
+          name: alunos-auth-key
+    parameters:
+      content:
+        instance:
+          destinations:
+          - Name: alunos_html5_repo_host
+            ServiceInstanceName: Alunos-html5-repo-host
+            ServiceKeyName: alunos-html5-repo-host-key
+            sap.cloud.service: alunos
+          - Authentication: OAuth2UserTokenExchange
+            Name: alunos_alunos_auth
+            ServiceInstanceName: Alunos-auth
+            ServiceKeyName: alunos-auth-key
+            sap.cloud.service: alunos
+          existing_destinations_policy: ignore
+    build-parameters:
+      no-source: true
 
   - name: Alunosalunos
     type: html5
@@ -86,9 +90,10 @@ modules:
       builder: custom
       commands:
         - npm ci
-        - npm run build
+        - npm run build:cf
       supported-platforms:
         []
+
   - name: Alunosalunosbycursos
     type: html5
     path: app/alunosbycursos
@@ -97,9 +102,10 @@ modules:
       builder: custom
       commands:
         - npm ci
-        - npm run build
+        - npm run build:cf
       supported-platforms:
         []
+
   - name: Alunoscursos
     type: html5
     path: app/cursos
@@ -108,11 +114,25 @@ modules:
       builder: custom
       commands:
         - npm ci
-        - npm run build
+        - npm run build:cf
       supported-platforms:
         []
 
 resources:
+  - name: Alunos-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      config:
+        database_id: 99a8c0de-90a2-4acb-9bc6-9523e2c0eeca
+      service: hana
+      service-plan: hdi-shared  
+
+  - name: Alunos-html5-repo-host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-host
+
   - name: Alunos-auth
     type: org.cloudfoundry.managed-service
     parameters:
@@ -122,19 +142,41 @@ resources:
       config:
         xsappname: Alunos-${org}-${space}
         tenant-mode: dedicated
-  - name: Alunos-db
-    type: com.sap.xs.hdi-container
-    parameters:
-      service: hana
-      service-plan: hdi-shared
 
-  - name: Alunos-html5-repo-host
+  - name: alunos-destination-service
     type: org.cloudfoundry.managed-service
     parameters:
-      service: html5-apps-repo
-      service-plan: app-host
-  - name: Alunos-html5-runtime
-    type: org.cloudfoundry.managed-service
-    parameters:
-      service: html5-apps-repo
-      service-plan: app-runtime
+      config:
+        HTML5Runtime_enabled: true
+        init_data:
+          instance:
+            destinations:
+            - Authentication: NoAuthentication
+              Name: ui5
+              ProxyType: Internet
+              Type: HTTP
+              URL: https://ui5.sap.com
+            - Authentication: NoAuthentication
+              HTML5.DynamicDestination: true
+              HTML5.ForwardAuthToken: true
+              Name: srv-api
+              ProxyType: Internet
+              Type: HTTP
+              URL: ~{srv-api/srv-url}
+            existing_destinations_policy: update
+        version: 1.0.0
+      service: destination
+      service-name: alunos-destination-service
+      service-plan: lite
+    requires:
+    - name: srv-api
+
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+  - builder: custom
+    commands:
+    - npm ci
+    - npx cds build --production
