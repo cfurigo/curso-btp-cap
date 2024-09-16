@@ -20,6 +20,7 @@ service AdminService {
     annotate Cursos with @odata.draft.enabled;
     annotate Cursos with @odata.draft.bypass;
 }
+annotate AdminService with @(requires: 'admin');
 
 service EstudantesService {
 
@@ -33,6 +34,7 @@ service EstudantesService {
         }
 
 }
+annotate EstudantesService with @(requires: 'viewer');
 
 annotate AdminService.inText:comment with @Common.Label :'Observacoes';
 annotate AdminService.inText:comment with @UI.MultiLineText:true;
