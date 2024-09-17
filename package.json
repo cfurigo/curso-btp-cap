@@ -25,6 +25,26 @@
       "draft_deletion_timeout": "1d"
     },
     "requires": {
+      "[development]": {
+        "auth": {
+          "kind": "mocked",
+          "users": {
+            "aluno.viewer@test.com": {
+              "password": "initial",
+              "roles": [
+                "viewer"
+              ]
+            },
+            "cfurigo@coachit.com.br": {
+              "password": "super",
+              "roles": [
+                "admin",
+                "viewer"
+              ]
+            }
+          }
+        }
+      },      
       "[production]": {
         "db": "hana",
         "auth": "xsuaa"
