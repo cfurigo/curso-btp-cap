@@ -5,8 +5,13 @@ annotate service.Estudantes with
         Data : [
             {
                 $Type : 'UI.DataField',
-                Label : 'Nome',
+                Label : '{i18n>Nombre}',
                 Value : Nome,
+            },
+            {
+                $Type : 'UI.DataField',
+                Value : email,
+                Label : 'Correo',
             },
             {
                 $Type : 'UI.DataField',
@@ -17,11 +22,6 @@ annotate service.Estudantes with
                 $Type : 'UI.DataField',
                 Value : curso_ID,
                 Label : '{i18n>Curso}',
-            },
-            {
-                $Type : 'UI.DataField',
-                Value : email,
-                Label : 'e-mail',
             },
             {
                 $Type : 'UI.DataField',
@@ -84,7 +84,8 @@ annotate service.Estudantes with
         {
             $Type : 'UI.DataFieldForAction',
             Action : 'AdminService.inativaAluno',
-            Label : 'Inativar Aluno', ![@UI.Hidden] : {$edmJson: {$If: [
+            Label : 'Inativar Aluno', 
+            ![@UI.Hidden] : {$edmJson: {$If: [
                 {$Eq: [
                     {$Path: 'IsActiveEntity'},
                     false // IsActiveEntity=false means you are in edit mode
@@ -144,5 +145,9 @@ annotate service.Estudantes with {
         UI.MultiLineText : true,
         Common.FieldControl : #ReadOnly,
     )
+};
+
+annotate service.Estudantes with {
+    critico @Common.FieldControl : #ReadOnly
 };
 

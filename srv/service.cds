@@ -12,7 +12,7 @@ service AdminService {
         action notificaAluno(); 
         @Common.IsActionCritical
         action inativaAluno(text:inText:comment); 
-    };
+    };    
     annotate Estudantes with @odata.draft.enabled;
     annotate Estudantes with @odata.draft.bypass;
 
@@ -23,7 +23,7 @@ service AdminService {
 annotate AdminService with @(requires: 'admin');
 
 service EstudantesService {
-
+    @readonly
     view EstudantesByCursos as 
         select from treinamento.Cursos as CursosEstudantes {
             key ID,
@@ -36,5 +36,5 @@ service EstudantesService {
 }
 annotate EstudantesService with @(requires: 'viewer');
 
-annotate AdminService.inText:comment with @Common.Label :'Observacoes';
+annotate AdminService.inText:comment with @Common.Label :'Comentarios';
 annotate AdminService.inText:comment with @UI.MultiLineText:true;

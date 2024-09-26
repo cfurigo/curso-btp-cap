@@ -5,7 +5,8 @@ module.exports = cds.service.impl(function() {
 
   /** Service Estudantes implementation */
   this.before(['CREATE','UPDATE'], 'Estudantes', function(req) {
-    console.log("Estudantes called");
+
+    console.log("Estudantes called" + req.data.Nome);
     if(req.data && !req.data.Nome){
       //req.info(412, 'Info - Nome precisa ser preenchido');
       req.error(400, 'Erro - Nome precisa ser preenchido');

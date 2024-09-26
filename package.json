@@ -9,8 +9,8 @@
     "@cap-js/hana": "^1",
     "@sap/cds": "^8",
     "@sap/textbundle": "^5.2.0",
-    "express": "^4",
-    "@sap/xssec": "^4"
+    "@sap/xssec": "^4",
+    "express": "^4"
   },
   "cds": {
     "i18n": {
@@ -44,7 +44,7 @@
             }
           }
         }
-      },      
+      },
       "[production]": {
         "db": "hana",
         "auth": "xsuaa"

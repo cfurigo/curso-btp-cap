@@ -1,2 +1,3 @@
 ID,Nome,DtAniversario,Telefone,email,status,createdAt,createdBy,modifiedAt,modifiedBy,critico,curso_ID
 20567922-7d57-4e76-b16c-e53fd97dcb12,Carlos,1980-09-28,+55 11 992662768,carlos@gmail.com,A,2024-08-13,Admin,,,3,20466921-7d57-4e76-b14c-e53fd97dcb11
+20567922-7d58-4e77-b17c-e53fd97dcb13,Roberto,2000-10-01,+55 15 993662869,roberto@gmail.com,P,2024-09-23,Admin,,,3,20466920-7d57-4e76-b15c-e53fd97dcb13
